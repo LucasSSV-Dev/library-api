@@ -37,7 +37,10 @@ public class Autor {
     @Column(length = 50, nullable = false)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "id_autor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY
+            //, cascade = CascadeType.ALL
+    )
+    @Column(name = "livros")
     private List<Livro> livros = new ArrayList<>();
 
     @CreatedDate //Não preciso mais criar um LocalDateTime.now()

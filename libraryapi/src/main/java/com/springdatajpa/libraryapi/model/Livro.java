@@ -1,13 +1,14 @@
 package com.springdatajpa.libraryapi.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "livro")
+@EntityListeners(AuditingEntityListener.class) //Lembre disso!!!!
 public class Livro {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,8 +40,19 @@ public class Livro {
     private BigDecimal preco;
 
     @ManyToOne //(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_autor", nullable = false)
-    private Autor id_autor; //Se o ID é de outra classe, você mostra aqui
+    @JoinColumn(name = "livros", nullable = false)
+    private Autor autor; //Se o ID é de outra classe, você mostra aqui
+
+    @CreatedDate //Não preciso mais criar um LocalDateTime.now()
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate //Não preciso mais criar um LocalDateTime.now()
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
 
 
     @Override
@@ -54,7 +67,7 @@ public class Livro {
                 "  titulo: " +
                 "'" + titulo + "'" +
                 ",\n" +
-                "  data_publicacao: " +
+                "  dataPublicacao: " +
                 data_publicacao +
                 ",\n" +
                 "  genero: " +
@@ -64,7 +77,7 @@ public class Livro {
                 preco +
                 ",\n" +
                 "  id_autor: " +
-                id_autor +
+                autor +
                 "\n}";
     }
 }

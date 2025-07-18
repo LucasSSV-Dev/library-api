@@ -1,8 +1,13 @@
 package com.springdatajpa.libraryapi.controller;
 
 import com.springdatajpa.libraryapi.controller.dto.AutorDTO;
+import com.springdatajpa.libraryapi.controller.dto.ErroResposta;
+import com.springdatajpa.libraryapi.exceptions.OperacaoNaoPermitidoException;
+import com.springdatajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.service.AutorService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -13,32 +18,34 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("autores")
 //http://localhost:8080/autores
 public class AutorController {
     private final AutorService service;
 
-    public AutorController(AutorService service) {
-        this.service = service;
-    }
-
 
     //Post Mappings
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody AutorDTO autor){ //O ResponseEntity precisa de um parâmetro, nesse caso o Void
-        var autorEntidade = autor.mapearParaAutor(); //Usando o conversor criado no DTO para devolver um Autor :D
-        service.save(autorEntidade); //Enviamos o autor pro Repository guardar no banco de Dados
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO autor){ //O ResponseEntity precisa de um parâmetro, nesse caso o Void
+        try {
+            var autorEntidade = autor.mapearParaAutor(); //Usando o conversor criado no DTO para devolver um Autor :D
+            service.save(autorEntidade); //Enviamos o autor pro Repository guardar no banco de Dados
 
-        //A location tem o endereço http desse autor.
-        //A location é tipo: http://localhost:8080/autores/{id}
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(autorEntidade.getId())
-                .toUri();
+            //A location tem o endereço http desse autor.
+            //A location é tipo: http://localhost:8080/autores/{id}
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(autorEntidade.getId())
+                    .toUri();
 
+            return ResponseEntity.created(location).build();
 
-        return ResponseEntity.created(location).build();
+        } catch(RegistroDuplicadoException e){
+            var erroDTO = ErroResposta.conflito(e.getMessage());
+          return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
 
 
@@ -69,28 +76,43 @@ public class AutorController {
 
     //DELETE Mappings
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteAutor(@PathVariable UUID id){
-        return service.deleteAutor(id);
+    public ResponseEntity<Object> deleteAutor(@PathVariable UUID id){
+        try {
+            Optional<Autor> autorOptional = service.findById(id);
 
+            //Se não existir esse autor, não encontrado!
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            //Dentro do service tem uma validação checando se tem livro desse autor cadastrado
+            service.deleteAutor(autorOptional.get()); //Se tiver livro vai retornar um erro e pulamos pro "Catch"
+
+            //Se não tem livro cadastrado, vamos deletar e entregar um "noContent" (Sucesso sem conteúdo).
+            return ResponseEntity.noContent().build();
+
+        } catch (OperacaoNaoPermitidoException e){
+            ErroResposta erroDTO = ErroResposta.respostaPadrao(e.getMessage());
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deletarTudo(){
-        return service.deleteAll();
-    }
 
     //PUT Mappings
-    //todo: CONSERTAR!!!!!!!!!
     @PutMapping("{id}")
-    public ResponseEntity<Void> atualizarAutor(@PathVariable UUID id,
+    public ResponseEntity<Object> atualizarAutor(@PathVariable UUID id,
                                                @RequestBody AutorDTO autor){
-        return service.atualizarAutor(id, autor);
+        try{
+            service.atualizarAutor(id, autor);
 
+        } catch (RegistroDuplicadoException e){
 
+            var erroDTO = ErroResposta.conflito(e.getMessage());
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
 
+        }
+        return ResponseEntity.noContent().build();
     }
-
-
 
 
 

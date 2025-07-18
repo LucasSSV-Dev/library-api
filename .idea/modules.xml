@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SEÇÃO4 - ACESSO A DADOS COM SPRING DATA JPA.iml" filepath="$PROJECT_DIR$/.idea/SEÇÃO4 - ACESSO A DADOS COM SPRING DATA JPA.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraryapi/libraryapi.iml" filepath="$PROJECT_DIR$/libraryapi/libraryapi.iml" />
     </modules>
   </component>
 </project>

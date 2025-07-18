@@ -10,7 +10,7 @@ id_usuario uuid
 
 create table livro(
 id uuid not null primary key,
-isbn varchar (20) not null,
+isbn varchar (20) not null unique,
 titulo varchar(150) not null,
 data_publicacao date not null,
 genero varchar (30) not null,
@@ -20,7 +20,7 @@ data_atualizacao timestamp,
 id_usuario uuid,
 id_autor uuid not null references autor(id),
 
-constraint chek_genero check (genero in ('FICCAO', 'FANTASIA', 'MISTERIO', 'ROMANCE', 'BIOGRAFIA', 'CIENCIA'))
+constraint chek_genero check (genero in ('FICCAO', 'FANTASIA', 'MISTERIO', 'ROMANCE', 'BIOGRAFIA', 'CIENCIA', 'RELIGIAO'))
 );
 
 drop table nomeTabela
