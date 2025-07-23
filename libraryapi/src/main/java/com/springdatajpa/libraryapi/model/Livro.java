@@ -1,7 +1,10 @@
 package com.springdatajpa.libraryapi.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -40,8 +43,8 @@ public class Livro {
     private BigDecimal preco;
 
     @ManyToOne //(cascade = CascadeType.ALL)
-    @JoinColumn(name = "livros", nullable = false)
-    private Autor autor; //Se o ID é de outra classe, você mostra aqui
+    @JoinColumn(name = "id_autor", nullable = false)
+    private Autor autor; //Se o “ID” é de outra classe, você mostra aqui
 
     @CreatedDate //Não preciso mais criar um LocalDateTime.now()
     @Column(name = "data_cadastro")
@@ -53,6 +56,10 @@ public class Livro {
 
     @Column(name = "id_usuario")
     private UUID idUsuario;
+
+
+
+
 
 
     @Override

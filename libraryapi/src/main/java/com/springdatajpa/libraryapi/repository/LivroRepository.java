@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface LivroRepository extends JpaRepository<Livro, UUID > {
     boolean existsByAutor(Autor Autor);
+
+    boolean existsByIsbn(String isbn);
 }

@@ -4,7 +4,9 @@ import com.springdatajpa.libraryapi.model.GeneroLivro;
 import com.springdatajpa.libraryapi.model.Livro;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.ISBN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,15 +17,26 @@ public record CadastroLivroDTO(
         @NotBlank(message = "Campo Obrigatório!")
         @Size(min = 3, max = 150, message = "Limite de caracteres ultrapassado. Max: 100.")
         String titulo,
-        BigDecimal preco,
+
         @NotBlank(message = "Campo Obrigatório!")
         @Size(max = 20, message = "Limite de caracteres ultrapassado. Max: 100.")
+        @ISBN
         String isbn,
+
         @NotNull(message = "Campo Obrigatório!")
+        @Past(message = "Não pode ser uma data futura")
         LocalDate dataPublicacao,
-        GeneroLivro genero,
+
         @NotNull(message = "Campo Obrigatório!")
-        UUID autorId) {
+        UUID autorId,
+
+        //Não é obrigatório
+        GeneroLivro genero,
+
+        //Não é obrigatório
+        BigDecimal preco
+
+        ) {
 
 
 
