@@ -1,6 +1,7 @@
 package com.springdatajpa.libraryapi.service;
 
 import com.springdatajpa.libraryapi.controller.dto.AutorDTO;
+import com.springdatajpa.libraryapi.controller.mapper.AutorMapper;
 import com.springdatajpa.libraryapi.exceptions.OperacaoNaoPermitidoException;
 import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.repository.AutorRepository;
@@ -9,7 +10,6 @@ import com.springdatajpa.libraryapi.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +22,7 @@ public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
+    private final AutorMapper  mapper;
 
 
     //Post Methods
@@ -38,18 +39,19 @@ public class AutorService {
     }
 
 
-    public ResponseEntity<List<AutorDTO>> pesquisa(String nome, String nacionalidade) {
-        if (nome != null && nacionalidade != null){
-            return ResponseEntity.ok(mapearParaListDTO(autorRepository.findByNomeAndNacionalidadeContainingIgnoreCase(nome, nacionalidade)));
-        }
-        if (nome != null){
-            return ResponseEntity.ok(mapearParaListDTO(autorRepository.findByNomeContainingIgnoreCase(nome)));
-        }
-        if (nacionalidade != null){
-            return ResponseEntity.ok(mapearParaListDTO(autorRepository.findByNacionalidadeContainingIgnoreCase(nacionalidade)));
-        }
-        return ResponseEntity.ok(mapearParaListDTO(autorRepository.findAll()));
-    }
+//    public List<AutorDTO> pesquisa(String nome, String nacionalidade) {
+//        if (nome != null && nacionalidade != null){
+//            return mapearParaListDTO(autorRepository.findByNomeAndNacionalidadeContainingIgnoreCase(nome, nacionalidade));
+//        }
+//        if (nome != null){
+//            return mapearParaListDTO(autorRepository.findByNomeContainingIgnoreCase(nome));
+//        }
+//        if (nacionalidade != null){
+//            return mapearParaListDTO(autorRepository.findByNacionalidadeContainingIgnoreCase(nacionalidade));
+//        }
+//        return mapearParaListDTO(autorRepository.findAll());
+//    }
+
 
     public List<AutorDTO> pesquisaByExample(String nome, String nacionalidade){
         var autor = new Autor();
@@ -93,7 +95,7 @@ public class AutorService {
             var autorFound = autorOptional.get(); //Traz o conteúdo pra variável
             validator.validar(autorFound); //Valida o autor, obviamente
             autorFound.update(autor); //Esse .update() faz um set das informações pro autorFound
-            autorRepository.save(autorFound); //Como o AutorFound já possui um id, ele salva no lugar do anterior
+            autorRepository.save(autorFound); //Como o AutorFound já possui um ‘id’, ele salva no lugar do anterior
         }
     }
 
@@ -105,6 +107,8 @@ public class AutorService {
     public List<AutorDTO> mapearParaListDTO(List<Autor> autorList){
         return autorList.stream().map(Autor::mapearParaAutorDTO).toList();
     }
+
+
 
     public boolean possuiAutor(Autor autor){
         return livroRepository.existsByAutor(autor);

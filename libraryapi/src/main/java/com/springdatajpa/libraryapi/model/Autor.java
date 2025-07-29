@@ -37,9 +37,7 @@ public class Autor {
     @Column(length = 50, nullable = false)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY
-            //, cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "autor")
     @Column(name = "livros")
     private List<Livro> livros = new ArrayList<>();
 
@@ -77,9 +75,10 @@ public class Autor {
         return new AutorDTO(this.id, this.nome, this.dataNascimento, this.nacionalidade);
     }
 
-    public void update(AutorDTO autor) {
-        this.setNome(autor.nome());
-        this.setDataNascimento(autor.dataNascimento());
-        this.setNacionalidade(autor.nacionalidade());
+    public Autor update(AutorDTO dto) {
+        this.setNome(dto.nome());
+        this.setDataNascimento(dto.dataNascimento());
+        this.setNacionalidade(dto.nacionalidade());
+        return this;
     }
 }
