@@ -1,10 +1,7 @@
 package com.springdatajpa.libraryapi.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,10 +12,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
+@ToString(exclude = "autor")
 @Table(name = "livro")
 @EntityListeners(AuditingEntityListener.class) //Lembre disso!!!!
 public class Livro {
@@ -57,34 +52,10 @@ public class Livro {
     @Column(name = "id_usuario")
     private UUID idUsuario;
 
-
-
-
-
-
-    @Override
-    public String toString() {
-        return "LivroEntity {\n" +
-                "  id: " +
-                id +
-                ",\n" +
-                "  isbn: " +
-                "'" + isbn + "'" +
-                ",\n" +
-                "  titulo: " +
-                "'" + titulo + "'" +
-                ",\n" +
-                "  dataPublicacao: " +
-                data_publicacao +
-                ",\n" +
-                "  genero: " +
-                "'" + genero + "'" +
-                ",\n" +
-                "  preco: " +
-                preco +
-                ",\n" +
-                "  id_autor: " +
-                autor +
-                "\n}";
-    }
 }
+
+
+
+
+
+

@@ -22,8 +22,8 @@ public class LivroService {
     private final LivroRepository livroRepository;
 
 
-    public void cadastrarLivro(Livro livro) {
-        livroRepository.save(livro);
+    public Livro cadastrarLivro(Livro livro) {
+        return livroRepository.save(livro);
     }
 
 
