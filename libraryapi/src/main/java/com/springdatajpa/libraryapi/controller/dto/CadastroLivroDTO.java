@@ -14,21 +14,20 @@ import java.util.UUID;
 
 
 public record CadastroLivroDTO(
+        @ISBN(type = ISBN.Type.ANY, message = "ISBN inválido")
+        @NotBlank(message = "Campo Obrigatório!")
+        String isbn,
+
         @NotBlank(message = "Campo Obrigatório!")
         @Size(min = 3, max = 150, message = "Limite de caracteres ultrapassado. Max: 100.")
         String titulo,
-
-        @NotBlank(message = "Campo Obrigatório!")
-        @Size(max = 20, message = "Limite de caracteres ultrapassado. Max: 100.")
-        @ISBN
-        String isbn,
 
         @NotNull(message = "Campo Obrigatório!")
         @Past(message = "Não pode ser uma data futura")
         LocalDate dataPublicacao,
 
         @NotNull(message = "Campo Obrigatório!")
-        UUID autorId,
+        UUID idAutor,
 
         //Não é obrigatório
         GeneroLivro genero,
@@ -38,18 +37,6 @@ public record CadastroLivroDTO(
 
         ) {
 
-
-
-    public Livro toLivro(){
-        Livro livro = new Livro();
-        livro.setTitulo(this.titulo);
-        livro.setPreco(this.preco);
-        livro.setIsbn(this.isbn);
-        livro.setData_publicacao(this.dataPublicacao);
-        livro.setGenero(this.genero);
-
-        return livro;
-    }
 
     @Override
     public String toString() {
@@ -70,7 +57,7 @@ public record CadastroLivroDTO(
                 genero +
                 ",\n" +
                 "  autor: " +
-                autorId +
+                idAutor +
                 "\n}";
     }
 }

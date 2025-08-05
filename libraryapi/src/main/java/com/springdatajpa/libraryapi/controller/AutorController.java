@@ -9,12 +9,13 @@ import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.service.AutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -64,13 +65,17 @@ public class AutorController {
 
 
     @GetMapping
-    public ResponseEntity<List<AutorDTO>> pesquisa(
+    public ResponseEntity<Object> pesquisa(
             @RequestParam(value = "nome", required = false) String nome,
-            @RequestParam(value = "nacionalidade", required = false) String nacionalidade){
 
-        return ResponseEntity.ok().body(service.pesquisaByExample(nome, nacionalidade));
+            @RequestParam(value = "nacionalidade", required = false) String nacionalidade,
+
+            @PageableDefault(page = 0, size = 3, sort = "nome") Pageable pageable){
+
+        var resultado = service.pesquisaByPage(nome, nacionalidade, pageable);
+
+        return ResponseEntity.ok().body(resultado);
     }
-
 
 
     //DELETE Mappings

@@ -18,6 +18,8 @@ public interface AutorRepository extends JpaRepository<Autor, UUID> {
 
     List<Autor> findByNacionalidadeContainingIgnoreCase(String nacionalidade);
 
+
+
     //Ele fez com "find" e não com "exists" pq precisa chegar o Id pra atualizar.
     Optional<Autor> findByNomeAndDataNascimentoAndNacionalidade(String nome,
                                                           LocalDate dadaNascimento,
