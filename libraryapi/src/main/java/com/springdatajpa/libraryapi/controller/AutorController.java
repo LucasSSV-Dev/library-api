@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("autores")
 //http://localhost:8080/autores
-public class AutorController {
+public class AutorController implements GenericController{
     private final AutorService service;
     private final AutorMapper  mapper;
 
@@ -37,11 +37,7 @@ public class AutorController {
 
             //A location tem o endereço http desse autor.
             //A location é tipo: http://localhost:8080/autores/{id}
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(autor.getId())
-                    .toUri();
+            URI location = gerarHeaderLocation(autor.getId());
 
             return ResponseEntity.created(location).build();
 
@@ -105,7 +101,7 @@ public class AutorController {
     //PUT Mappings
     @PutMapping("{id}")
     public ResponseEntity<Object> atualizarAutor(@PathVariable UUID id,
-                                               @RequestBody AutorDTO autor){
+                                               @RequestBody @Valid AutorDTO autor){
         try{
             service.atualizarAutor(id, autor);
 
