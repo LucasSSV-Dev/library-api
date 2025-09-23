@@ -76,12 +76,12 @@ public class LivroService {
 
 
     public List<ResultadoPesquisaLivroDTO> toResultadoDTOList(List<Livro> livros) {
-        List<ResultadoPesquisaLivroDTO> output = new ArrayList<>();
+        List<ResultadoPesquisaLivroDTO> livroDTOList = new ArrayList<>();
 
-        for (Livro livro : livros){
-            output.add(new ResultadoPesquisaLivroDTO(livro.getId(), livro.getTitulo(), livro.getPreco(), livro.getIsbn(), livro.getData_publicacao(), livro.getGenero(), livro.getAutor().mapearParaAutorDTO()));
+        for (Livro livro : livros) {
+            livroDTOList.add(livroMapper.toResultadoDTO(livro));
         }
-        return output;
+        return livroDTOList;
     }
 
 

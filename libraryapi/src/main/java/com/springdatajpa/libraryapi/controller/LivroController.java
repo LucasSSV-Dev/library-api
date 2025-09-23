@@ -75,7 +75,7 @@ public class LivroController implements GenericController{
     //Delete
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") UUID id){
+    public ResponseEntity<Object> deleteById(@PathVariable("id") UUID id){
         //Tenta excluir. Se ele conseguir vai dar true. Se não vai dar false
         if (livroService.deleteById(id)){
             return ResponseEntity.noContent().build(); //Se excluiu vida que segue
