@@ -20,6 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LivroService {
     private final LivroRepository livroRepository;
+    private final LivroValidador livroValidador;
+    private final LivroMapper livroMapper;
 
 
     public Livro cadastrarLivro(Livro livro) {
@@ -58,6 +60,7 @@ public class LivroService {
 
         return livroRepository.findAll(livroExample);
     }
+
 
     public boolean deleteById(UUID id) {
         //Tento achar pra ver se tem

@@ -1,10 +1,7 @@
 package com.springdatajpa.libraryapi.controller;
 
 import com.springdatajpa.libraryapi.controller.dto.AutorDTO;
-import com.springdatajpa.libraryapi.controller.dto.ErroResposta;
 import com.springdatajpa.libraryapi.controller.mapper.AutorMapper;
-import com.springdatajpa.libraryapi.exceptions.OperacaoNaoPermitidoException;
-import com.springdatajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.service.AutorService;
 import jakarta.validation.Valid;
@@ -13,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Optional;
@@ -31,8 +27,7 @@ public class AutorController implements GenericController{
     //Post Mappings
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto){ //O ResponseEntity precisa de um parâmetro, nesse caso o Void
-        try {
-            Autor autor = mapper.ToAutor(dto); //Usando o conversor criado no DTO para devolver um Autor :D
+            Autor autor = mapper.toAutor(dto); //Usando o conversor criado no DTO para devolver um Autor :D
             service.save(autor); //Enviamos o autor pro Repository guardar no banco de Dados
 
             //A location tem o endereço http desse autor.
@@ -54,7 +49,7 @@ public class AutorController implements GenericController{
     @GetMapping("{id}")
     public ResponseEntity<AutorDTO> findAutor(@PathVariable UUID id){
         return service.findById(id).map(Autor -> {
-            AutorDTO dto = mapper.ToAutorDTO(Autor);
+            AutorDTO dto = mapper.toAutorDTO(Autor);
             return ResponseEntity.ok(dto);
         }).orElse(ResponseEntity.notFound().build());
     }

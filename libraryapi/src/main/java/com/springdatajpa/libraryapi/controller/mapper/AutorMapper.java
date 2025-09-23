@@ -7,8 +7,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface AutorMapper {
 
-    AutorDTO ToAutorDTO(Autor autor);
+    AutorDTO toAutorDTO(Autor autor);
 
-    Autor ToAutor(AutorDTO autorDTO);
+    Autor toAutor(AutorDTO autorDTO);
 
 }
