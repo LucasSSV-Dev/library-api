@@ -29,11 +29,6 @@ public class LivroService {
     }
 
 
-    public List<Livro> findAll() {
-        return livroRepository.findAll();
-    }
-
-
     public List<Livro> pesquisaLivroByExample(String titulo, GeneroLivro genero, String isbn, String autorNome, LocalDate publicacao) {
         //Crio e insiro os valores do livro
         Livro livro = new Livro();
