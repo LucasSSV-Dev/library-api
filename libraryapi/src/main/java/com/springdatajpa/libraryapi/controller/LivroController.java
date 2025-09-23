@@ -1,12 +1,10 @@
 package com.springdatajpa.libraryapi.controller;
 
 import com.springdatajpa.libraryapi.controller.dto.CadastroLivroDTO;
-import com.springdatajpa.libraryapi.controller.dto.ErroResposta;
+import com.springdatajpa.libraryapi.controller.dto.ResultadoPesquisaLivroDTO;
 import com.springdatajpa.libraryapi.controller.mapper.LivroMapper;
-import com.springdatajpa.libraryapi.exceptions.RegistroDuplicadoException;
 import com.springdatajpa.libraryapi.model.GeneroLivro;
 import com.springdatajpa.libraryapi.model.Livro;
-import com.springdatajpa.libraryapi.service.AutorService;
 import com.springdatajpa.libraryapi.service.LivroService;
 import com.springdatajpa.libraryapi.validator.LivroValidador;
 import jakarta.validation.Valid;
@@ -16,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LivroController implements GenericController{
     private final LivroService livroService;
-    private final AutorService autorService;
+//    private final AutorService autorService; //Não estava usando...
     private final LivroValidador livroValidador;
     private final LivroMapper mapper;
 
@@ -32,26 +32,21 @@ public class LivroController implements GenericController{
 
     @PostMapping
     public ResponseEntity<Object> cadastrarLivro(@RequestBody @Valid CadastroLivroDTO dto){
-        try {
             Livro livro = mapper.toEntity(dto);
+            livroValidador.validarLivro(livro);
+
             livroService.cadastrarLivro(livro);
 
             URI location = gerarHeaderLocation(livro.getId());
 
-
             return ResponseEntity.created(location).build();
-
-    } catch(RegistroDuplicadoException e){
-        var erroDTO = ErroResposta.conflito(e.getMessage());
-        return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-    }
     }
 
 
     //Get:
 
     @GetMapping
-    public ResponseEntity<Object> PesquisaLivroByExample(
+    public ResponseEntity<Object> Pesquisa(
             @RequestParam(value = "titulo", required = false) String titulo,
             @RequestParam(value = "genero", required = false) GeneroLivro genero,
             @RequestParam(value = "isbn", required = false) String isbn,
@@ -59,11 +54,11 @@ public class LivroController implements GenericController{
             @RequestParam(value = "publicacao", required = false) LocalDate publicacao
             ){
 
-        var livro = livroService.toResultadoDTOList(
+        List<ResultadoPesquisaLivroDTO> resultadoDTOList = livroService.toResultadoDTOList(
                 livroService.pesquisaLivroByExample(titulo, genero, isbn, autorNome, publicacao)
         );
         
-        return ResponseEntity.ok().body(livro);
+        return ResponseEntity.ok().body(resultadoDTOList);
     }
 
 

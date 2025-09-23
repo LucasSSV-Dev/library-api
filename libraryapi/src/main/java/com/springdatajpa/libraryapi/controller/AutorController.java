@@ -35,11 +35,6 @@ public class AutorController implements GenericController{
             URI location = gerarHeaderLocation(autor.getId());
 
             return ResponseEntity.created(location).build();
-
-        } catch(RegistroDuplicadoException e){
-            var erroDTO = ErroResposta.conflito(e.getMessage());
-          return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
     }
 
 
@@ -72,7 +67,6 @@ public class AutorController implements GenericController{
     //DELETE Mappings
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteAutor(@PathVariable UUID id){
-        try {
             Optional<Autor> autorOptional = service.findById(id);
 
             //Se não existir esse autor, não encontrado!
@@ -85,11 +79,6 @@ public class AutorController implements GenericController{
 
             //Se não tem livro cadastrado, vamos deletar e entregar um "noContent" (Sucesso sem conteúdo).
             return ResponseEntity.noContent().build();
-
-        } catch (OperacaoNaoPermitidoException e){
-            ErroResposta erroDTO = ErroResposta.respostaPadrao(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
     }
 
 
@@ -97,15 +86,9 @@ public class AutorController implements GenericController{
     @PutMapping("{id}")
     public ResponseEntity<Object> atualizarAutor(@PathVariable UUID id,
                                                @RequestBody @Valid AutorDTO autor){
-        try{
-            service.atualizarAutor(id, autor);
 
-        } catch (RegistroDuplicadoException e){
+        service.atualizarAutor(id, autor);
 
-            var erroDTO = ErroResposta.conflito(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-
-        }
         return ResponseEntity.noContent().build();
     }
 
