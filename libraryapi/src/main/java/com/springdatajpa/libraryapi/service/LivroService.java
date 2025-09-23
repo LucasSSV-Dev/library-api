@@ -24,8 +24,8 @@ public class LivroService {
     private final LivroMapper livroMapper;
 
 
-    public Livro cadastrarLivro(Livro livro) {
-        return livroRepository.save(livro);
+    public void cadastrarLivro(Livro livro) {
+        livroRepository.save(livro);
     }
 
 
@@ -75,7 +75,6 @@ public class LivroService {
     }
 
 
-
     public List<ResultadoPesquisaLivroDTO> toResultadoDTOList(List<Livro> livros) {
         List<ResultadoPesquisaLivroDTO> output = new ArrayList<>();
 
@@ -86,4 +85,16 @@ public class LivroService {
     }
 
 
+    public Optional<Livro> obterPorId(UUID id) {
+
+        return livroRepository.findById(id);
+    }
+
+    public void atualizarLivro(Livro livro) {
+        if (livro.getId() == null) {
+            throw new OperacaoNaoPermitidoException("Para atualizar, é necessário que o livro esteja cadastrado!");
+        }
+        livroValidador.validarLivro(livro);
+        livroRepository.save(livro);
+    }
 }

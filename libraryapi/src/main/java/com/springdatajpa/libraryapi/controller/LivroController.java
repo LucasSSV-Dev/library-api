@@ -61,6 +61,16 @@ public class LivroController implements GenericController{
         return ResponseEntity.ok().body(resultadoDTOList);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> PesquisaLivroById(@PathVariable UUID id){
+        Optional<Livro> livroOptional = livroService.obterPorId(id);
+        if (livroOptional.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        ResultadoPesquisaLivroDTO livroDTO = mapper.toResultadoDTO(livroOptional.get());
+        return ResponseEntity.ok().body(livroDTO);
+    }
+
 
     //Delete
 
@@ -73,6 +83,28 @@ public class LivroController implements GenericController{
         return ResponseEntity.notFound().build(); //Se não excluiu, aparece não encontrado
     }
 
+    //Put
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> atualizar(@PathVariable UUID id, @RequestBody @Valid CadastroLivroDTO dto){
+        return livroService.obterPorId(id).map(livro -> {
+            Livro entidadeAux = mapper.toEntity(dto);
+
+            livro.setIsbn(entidadeAux.getIsbn());
+            livro.setTitulo(entidadeAux.getTitulo());
+            livro.setData_publicacao(entidadeAux.getData_publicacao());
+            livro.setGenero(entidadeAux.getGenero());
+            livro.setPreco(entidadeAux.getPreco());
+            livro.setAutor(entidadeAux.getAutor());
+
+            livroValidador.validarLivro(livro);
+            livroService.atualizarLivro(livro);
+
+            return ResponseEntity.noContent().build();
+
+            //Se não rolar, Not Found...
+        }).orElse(ResponseEntity.notFound().build());
+    }
 
 
 }
