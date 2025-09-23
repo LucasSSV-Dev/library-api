@@ -1,10 +1,13 @@
 package com.springdatajpa.libraryapi.service;
 
 import com.springdatajpa.libraryapi.controller.dto.ResultadoPesquisaLivroDTO;
+import com.springdatajpa.libraryapi.controller.mapper.LivroMapper;
+import com.springdatajpa.libraryapi.exceptions.OperacaoNaoPermitidoException;
 import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.model.GeneroLivro;
 import com.springdatajpa.libraryapi.model.Livro;
 import com.springdatajpa.libraryapi.repository.LivroRepository;
+import com.springdatajpa.libraryapi.validator.LivroValidador;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
