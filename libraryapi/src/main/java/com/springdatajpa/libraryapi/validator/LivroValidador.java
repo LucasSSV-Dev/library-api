@@ -39,7 +39,7 @@ public class LivroValidador {
     }
 
     private boolean isPrecoObrigatorioNulo(Livro livro) {
-        return livro.getPreco() == null && //Não esquecer que estamos comparando com "2020" Então precisamos pegar só o ano da DataPublicacao.
+        return livro.getPreco() == null && //Comparando com "2020" Então precisamos pegar só o ano da DataPublicacao.
                 livro.getData_publicacao().getYear() >= ANO_EXIGENCIA_PRECO;
     }
 
