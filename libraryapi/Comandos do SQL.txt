@@ -25,3 +25,10 @@ constraint chek_genero check (genero in ('FICCAO', 'FANTASIA', 'MISTERIO', 'ROMA
 
 drop table nomeTabela
 Select * from nomeTabela
+
+create table usuario(
+id uuid not null primary key,
+login varchar(20) not null unique,
+senha varchar(300) not null,
+roles varchar[]
+);
