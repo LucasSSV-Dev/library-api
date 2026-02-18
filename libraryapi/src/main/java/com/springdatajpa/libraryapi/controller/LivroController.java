@@ -10,6 +10,7 @@ import com.springdatajpa.libraryapi.validator.LivroValidador;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -31,6 +32,7 @@ public class LivroController implements GenericController{
     //Post:
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Object> cadastrarLivro(@RequestBody @Valid CadastroLivroDTO dto){
             Livro livro = mapper.toEntity(dto);
             livroValidador.validarLivro(livro);
@@ -46,6 +48,7 @@ public class LivroController implements GenericController{
     //Get:
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Object> Pesquisa(
             @RequestParam(value = "titulo", required = false) String titulo,
             @RequestParam(value = "genero", required = false) GeneroLivro genero,
@@ -62,6 +65,7 @@ public class LivroController implements GenericController{
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Object> PesquisaLivroById(@PathVariable UUID id){
         Optional<Livro> livroOptional = livroService.obterPorId(id);
         if (livroOptional.isEmpty()){
@@ -75,7 +79,8 @@ public class LivroController implements GenericController{
     //Delete
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteById(@PathVariable("id") UUID id){
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
+    public ResponseEntity<Object> deleteById(@PathVariable UUID id){
         //Tenta excluir. Se ele conseguir vai dar true. Se não vai dar false
         if (livroService.deleteById(id)){
             return ResponseEntity.noContent().build(); //Se excluiu vida que segue
@@ -86,6 +91,7 @@ public class LivroController implements GenericController{
     //Put
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Object> atualizar(@PathVariable UUID id, @RequestBody @Valid CadastroLivroDTO dto){
         return livroService.obterPorId(id).map(livro -> {
             Livro entidadeAux = mapper.toEntity(dto);

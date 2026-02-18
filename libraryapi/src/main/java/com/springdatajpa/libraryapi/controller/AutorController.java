@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -26,6 +27,7 @@ public class AutorController implements GenericController{
 
     //Post Mappings
     @PostMapping
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto){ //O ResponseEntity precisa de um parâmetro, nesse caso o Void
             Autor autor = mapper.toAutor(dto); //Usando o conversor criado no DTO para devolver um Autor :D
             service.save(autor); //Enviamos o autor pro Repository guardar no banco de Dados
@@ -40,23 +42,24 @@ public class AutorController implements GenericController{
 
 
     //GET Mappings
-    //todo: Acho que está correto. Perguntar ao GPT.
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('GERENTE', 'OPERADOR')")
     public ResponseEntity<AutorDTO> findAutor(@PathVariable UUID id){
-        return service.findById(id).map(Autor -> {
-            AutorDTO dto = mapper.toAutorDTO(Autor);
-            return ResponseEntity.ok(dto);
-        }).orElse(ResponseEntity.notFound().build());
+        return service.findById(id)
+                .map(mapper::toAutorDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('GERENTE', 'OPERADOR')")
     public ResponseEntity<Object> pesquisa(
             @RequestParam(value = "nome", required = false) String nome,
 
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade,
 
-            @PageableDefault(page = 0, size = 3, sort = "nome") Pageable pageable){
+            @PageableDefault(size = 3, sort = "nome") Pageable pageable){
 
         var resultado = service.pesquisaByPage(nome, nacionalidade, pageable);
 
@@ -66,6 +69,7 @@ public class AutorController implements GenericController{
 
     //DELETE Mappings
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> deleteAutor(@PathVariable UUID id){
             Optional<Autor> autorOptional = service.findById(id);
 
@@ -84,6 +88,7 @@ public class AutorController implements GenericController{
 
     //PUT Mappings
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Object> atualizarAutor(@PathVariable UUID id,
                                                @RequestBody @Valid AutorDTO autor){
 
