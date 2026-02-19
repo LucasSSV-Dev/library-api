@@ -3,18 +3,22 @@ package com.springdatajpa.libraryapi.controller;
 import com.springdatajpa.libraryapi.controller.dto.AutorDTO;
 import com.springdatajpa.libraryapi.controller.mapper.AutorMapper;
 import com.springdatajpa.libraryapi.model.Autor;
-import com.springdatajpa.libraryapi.model.Usuario;
 import com.springdatajpa.libraryapi.service.AutorService;
-import com.springdatajpa.libraryapi.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.extras.springsecurity6.auth.Authorization;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.Optional;
@@ -26,23 +30,15 @@ import java.util.UUID;
 //http://localhost:8080/autores
 public class AutorController implements GenericController{
     private final AutorService service;
-    private final UsuarioService usuarioService;
     private final AutorMapper  mapper;
 
 
     //Post Mappings
     @PostMapping
     @PreAuthorize("hasRole('GERENTE')")
-    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto, Authorization authorization){ //O ResponseEntity precisa de um parâmetro, nesse caso o Void
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto){ //O ResponseEntity precisa de um parâmetro, nesse caso o Void
         //Mapper pra criar a entidade Autor
         Autor autor = mapper.toAutor(dto); //Usando o Mapper para devolver um Autor :D
-
-        //Authorization
-        UserDetails usuarioLogado = (UserDetails) authorization.getAuthentication().getPrincipal(); //Pegando os dados do usuário.
-        Usuario usuario = usuarioService.obterPorLogin(usuarioLogado.getUsername()); //pegando o usuario no banco de dados pra termos o ID dele.
-        autor.setIdUsuario(usuario.getId());//Injetamos o id do GERENTE que criou o novo autor.
-
-
         service.save(autor); //Enviamos o autor pro Service preparar e enviar pro Repository.
 
         //A location tem o endereço http desse autor.
