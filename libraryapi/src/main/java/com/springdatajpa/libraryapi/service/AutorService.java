@@ -3,11 +3,11 @@ package com.springdatajpa.libraryapi.service;
 import com.springdatajpa.libraryapi.controller.dto.AutorDTO;
 import com.springdatajpa.libraryapi.controller.dto.PaginaDeAutoresDTO;
 import com.springdatajpa.libraryapi.controller.dto.PaginacaoDTO;
-import com.springdatajpa.libraryapi.controller.mapper.AutorMapper;
 import com.springdatajpa.libraryapi.exceptions.OperacaoNaoPermitidoException;
 import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.repository.AutorRepository;
 import com.springdatajpa.libraryapi.repository.LivroRepository;
+import com.springdatajpa.libraryapi.security.SecurityService;
 import com.springdatajpa.libraryapi.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -26,12 +26,13 @@ public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
-    private final AutorMapper  mapper;
+    private final SecurityService securityService;
 
 
     //Post Methods
     public void save(Autor autor) {
         validator.validar(autor);
+        autor.setUsuario(securityService.obterUsuarioLogado());
         autorRepository.save(autor);
     }
 
