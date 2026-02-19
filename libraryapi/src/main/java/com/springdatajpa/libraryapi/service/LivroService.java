@@ -7,6 +7,7 @@ import com.springdatajpa.libraryapi.model.Autor;
 import com.springdatajpa.libraryapi.model.GeneroLivro;
 import com.springdatajpa.libraryapi.model.Livro;
 import com.springdatajpa.libraryapi.repository.LivroRepository;
+import com.springdatajpa.libraryapi.security.SecurityService;
 import com.springdatajpa.libraryapi.validator.LivroValidador;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -25,9 +26,12 @@ public class LivroService {
     private final LivroRepository livroRepository;
     private final LivroValidador livroValidador;
     private final LivroMapper livroMapper;
+    private final SecurityService securityService;
 
 
     public void cadastrarLivro(Livro livro) {
+        livroValidador.validarLivro(livro);
+        livro.setUsuario(securityService.obterUsuarioLogado());
         livroRepository.save(livro);
     }
 
